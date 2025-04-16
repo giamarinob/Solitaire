@@ -16,7 +16,8 @@ class Foundation:
 
     def can_add_card(self, card):
         """Check if the card can be added to the foundation."""
-        if not self.cards:
+        top_card = self.top_card()
+        if not top_card:
             # If foundation is empty, only Ace from any suit can be placed.
             return card.value == 1
 
@@ -25,7 +26,6 @@ class Foundation:
             print("Suit does not match " + self.suit)
             return False
 
-        top_card = self.cards[-1]
         # The card must be one rank higher than the top card (ascending order)
         if card.value == top_card.value + 1:
             return True
