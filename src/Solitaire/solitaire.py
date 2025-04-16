@@ -79,11 +79,13 @@ class Solitaire:
         from_tableau = self.tableaus[from_index]
         to_tableau = self.tableaus[to_index]
 
+        index = start_card_index - 1
+
         # Grab the card we're moving (must be face up and valid index)
-        if start_card_index < 0 or start_card_index >= len(from_tableau.cards):
+        if index < 0 or index >= len(from_tableau.cards):
             return False
 
-        moving_card = from_tableau.cards[start_card_index]
+        moving_card = from_tableau.cards[index]
         if not moving_card.face_up:
             return False  # Cannot move facedown cards
 
@@ -161,14 +163,16 @@ class Solitaire:
 
         self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.score)
         # Slice out the cards to move
-        cards_to_move = from_tableau.cards[start_index:]
+        index = start_index - 1
+
+        cards_to_move = from_tableau.cards[index:]
 
         # Add to the destination tableau
         for card in cards_to_move:
             to_tableau.add_card(card)
 
         # Remove from the source tableau
-        from_tableau.cards = from_tableau.cards[:start_index]
+        from_tableau.cards = from_tableau.cards[:index]
 
         # Flip new top card if needed
         if from_tableau.cards and not from_tableau.top_card().face_up:
