@@ -51,17 +51,17 @@ python main.py
 
 ## 🎮 Commands
 
-| Command                  | Description                                            |
-|--------------------------|--------------------------------------------------------|
-| `draw`                   | Draw up to 3 cards from the stock to the waste         |
-| `move waste to tableau	`        | Move top card from waste to a tableau                  |
-| `move waste to foundation`     | Move top card from waste to a foundation               |
-| `move tableau to tableau	`        | Move face-up cards from one tableau to another         |
+| Command                       | Description                                            |
+|-------------------------------|--------------------------------------------------------|
+| `draw`                        | Draw up to 3 cards from the stock to the waste         |
+| `move waste to tableau	`      | Move top card from waste to a tableau                  |
+| `move waste to foundation`    | Move top card from waste to a foundation               |
+| `move tableau to tableau	`    | Move face-up cards from one tableau to another         |
 | `move tableau to foundation	` | Move top card from tableau to foundation     |
-| `f2t <foundation #> <tableau #>` | Move card from foundation to tableau         |
-| `undo`                   | Undo the last move                                     |
-|`help`                  | Display the list of available commands |
-| `quit`                   | Quit the game                                          |
+| `move foundation to tableau`  | Move card from foundation to tableau         |
+| `undo`                        | Undo the last move                                     |
+| `help`                        | Display the list of available commands |
+| `quit`                        | Quit the game                                          |
 
 *Note That <start_card_index> starts at 1*
 
@@ -73,4 +73,4 @@ python main.py
 - Add more detailed documentation for the game and agent.
 
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/giamarinob/Solitaire/blob/main/LICENSE) file for details.
