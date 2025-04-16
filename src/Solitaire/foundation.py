@@ -33,7 +33,7 @@ class Foundation:
         return False
 
     def remove_top_card(self):
-        if self.cards:
+        if self.cards and self.cards[-1].value != 1:
             return self.cards.pop()
         return None
 
