@@ -24,7 +24,6 @@ class Card:
         self.suit_name = suit_name
         self.suit = Card.SUITS[suit_name]  # symbol, e.g., '♠'
         self.rank = rank
-        self.value = Card.RANKS.index(rank) + 1
         self.face_up = face_up
 
     @property
@@ -37,6 +36,7 @@ class Card:
     def is_black(self):
         return self.color == 'black'
 
+    @property
     def value(self):
         """Return numerical value for comparing order (1 = A, 13 = K)"""
         return Card.RANKS.index(self.rank) + 1
