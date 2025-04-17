@@ -1,10 +1,10 @@
 import copy
 import time
-from src.Solitaire.deck import Deck
-from src.Solitaire.stock import Stock
-from src.Solitaire.waste import Waste
-from src.Solitaire.tableau import Tableau
-from src.Solitaire.foundation import Foundation
+from Solitaire.deck import Deck
+from Solitaire.stock import Stock
+from Solitaire.waste import Waste
+from Solitaire.tableau import Tableau
+from Solitaire.foundation import Foundation
 
 class Solitaire:
     def __init__(self):
