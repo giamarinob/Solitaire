@@ -28,6 +28,8 @@ class Solitaire:
         self.start_time = time.time()
         self.time_limit = 300 # 5 minutes
 
+        self.game_won = False
+
         self._setup_game()
 
     def _setup_game(self):
@@ -275,13 +277,17 @@ class Solitaire:
 
     def is_won(self):
         # Normal win
-        if all(len(f.cards) == 13 for f in self.foundations):
+        if self._get_foundation_total() == 52:
+            self.game_won = True
+            self.end()
             return True
 
         # Deterministic win
         if self.is_deterministic_win():
             for tableau in self.tableaus:
                 self.score += len(tableau.cards) * 100
+            self.game_won = True
+            self.end()
             return True
 
         return False
@@ -294,6 +300,30 @@ class Solitaire:
                         return False
             return True
         return False
+
+    def end(self):
+        time = self.time_remaining()
+
+        if self.game_won:
+            self.score += time * 100
+        else:
+            num_cards = self._get_foundation_total()
+
+            if num_cards < 10:
+                self.score += time
+            elif num_cards < 20:
+                self.score += time * 2
+            elif num_cards < 35:
+                self.score += time * 10
+            else:
+                self.score += time * 50
+
+    def _get_foundation_total(self):
+        total = 0
+        for foundation in self.foundations:
+            total += len(foundation.cards)
+
+        return total
 
     def display(self):
         print("=== Solitaire Game State ===")

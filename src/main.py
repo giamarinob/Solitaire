@@ -28,8 +28,14 @@ def main():
             print("Congratulations! You've won the game!")
             break
 
+        if not game.time_remaining():
+            print("Game Over!")
+            game.end()
+            break
+
         command = input("\n> ").strip().lower()
         if command == "quit":
+            game.end()
             game.display()
             break
         elif command == "help":
