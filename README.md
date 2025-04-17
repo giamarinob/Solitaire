@@ -46,7 +46,7 @@ Supports undoing the most recent move only. Game state (cards, score, etc.) is d
 ### Run the Game
 
 ```bash
-python main.py
+python main_manual.py
 ```
 
 ## 🎮 Commands
