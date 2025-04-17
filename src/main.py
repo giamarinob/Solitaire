@@ -54,12 +54,13 @@ def main():
                 elif parts[1] == "waste" and parts[2] == "tableau":
                     game.move("waste", None, "tableau", int(parts[3]))
                 elif parts[1] == "waste" and parts[2] == "foundation":
-                    game.move("waste", None, "foundation", int(parts[4]))
+                    game.move("waste", None, "foundation", int(parts[3]))
                 elif parts[1] == "foundation" and parts[3] == "tableau":
                     game.move("foundation", int(parts[2]), "tableau", int(parts[4]))
                 else:
                     print("Invalid move command.")
-            except (IndexError, ValueError):
+            except (IndexError, ValueError) as e:
+                print(f"{e}")
                 print("Invalid command format.")
         else:
             print("Unknown command. Type 'help' to see available commands.")
