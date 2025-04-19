@@ -14,7 +14,6 @@ def main():
         action = agent.select_action(obs)
         print(env.action_space[action])
         obs, reward, done, info = env.step(action)
-        print(done)
         total_reward += reward
         env.render()  # optional: show board
         sleep(1)

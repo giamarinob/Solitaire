@@ -14,7 +14,9 @@ class Solitaire:
         self.waste = Waste()
         self.tableaus = [Tableau() for _ in range(7)]
         self.foundations = [Foundation() for _ in range(4)]
-        self.score = 0  # Starting score
+
+        self.base_score = 0  # Starting score
+        self.time_bonus = 0
 
         # Used for undoing a move
         self.undo_stock = None
@@ -48,6 +50,13 @@ class Solitaire:
         while not self.deck.is_empty():
             self.stock.add_card(self.deck.deal())
 
+    @property
+    def score(self):
+        # For a simple agent we will omit the time bonus
+        # @TODO return final_score
+        final_score = self.base_score + self.time_bonus
+        return self.base_score
+
     def time_remaining(self):
         elapsed = time.time() - self.start_time
         return max(0, int(self.time_limit - elapsed))
@@ -56,11 +65,11 @@ class Solitaire:
         return self.time_remaining() <= 0
 
     def draw_from_stock(self):
-        self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.score)
+        self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.base_score)
 
         if self.stock.is_empty():
             self._recycle_waste()
-            self.score -= 20
+            self.base_score -= 20
             print("Recycled waste")
         else:
             # Draw up to 3 cards from stock into waste
@@ -84,7 +93,7 @@ class Solitaire:
         index = start_card_index - 1
 
         # Grab the card we're moving (must be face up and valid index)
-        if index < 0 or index >= len(from_tableau.cards):
+        if index < -1 or index >= len(from_tableau.cards):
             return False
 
         moving_card = from_tableau.cards[index]
@@ -144,7 +153,7 @@ class Solitaire:
             self.waste = self.undo_waste
             self.tableaus = self.undo_tableaus
             self.foundations = self.undo_foundations
-            self.score = self.undo_score
+            self.base_score = self.undo_score
             self.undo_flag = False
             self.undo_stock = None
             self.undo_waste = None
@@ -163,7 +172,7 @@ class Solitaire:
         from_tableau = self.tableaus[from_index]
         to_tableau = self.tableaus[to_index]
 
-        self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.score)
+        self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.base_score)
         # Slice out the cards to move
         index = start_index - 1
 
@@ -179,7 +188,7 @@ class Solitaire:
         # Flip new top card if needed
         if from_tableau.cards and not from_tableau.top_card().face_up:
             from_tableau.top_card().flip()
-            self.score += 20
+            self.base_score += 20
 
         return True
 
@@ -196,15 +205,15 @@ class Solitaire:
             print("Illegal move to foundation.")
             return False
 
-        self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.score)
+        self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.base_score)
         # Perform the move
         foundation.add_card(tableau.remove_card())
-        self.score += 100
+        self.base_score += 100
 
         # Flip new top card if needed
         if tableau.cards and not tableau.top_card().face_up:
             tableau.top_card().flip()
-            self.score += 20
+            self.base_score += 20
 
         return True
 
@@ -226,10 +235,10 @@ class Solitaire:
                 print("Illegal move to tableau.")
                 return False
 
-        self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.score)
+        self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.base_score)
         # Perform the move
         tableau.add_card(self.waste.remove_top_card())
-        self.score += 20
+        self.base_score += 20
         return True
 
     def _move_waste_to_foundation(self, foundation_index):
@@ -244,10 +253,10 @@ class Solitaire:
             print("Illegal move to foundation.")
             return False
 
-        self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.score)
+        self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.base_score)
 
         foundation.add_card(self.waste.remove_top_card())
-        self.score += 120
+        self.base_score += 120
         return True
 
     def _move_foundation_to_tableau(self, foundation_index, tableau_index):
@@ -269,10 +278,10 @@ class Solitaire:
                 print("Illegal move from foundation to tableau.")
                 return False
 
-        self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.score)
+        self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.base_score)
 
         tableau.add_card(foundation.remove_top_card())
-        self.score -= 100
+        self.base_score -= 100
         return True
 
     def is_won(self):
@@ -285,7 +294,7 @@ class Solitaire:
         # Deterministic win
         if self.is_deterministic_win():
             for tableau in self.tableaus:
-                self.score += len(tableau.cards) * 100
+                self.base_score += len(tableau.cards) * 100
             self.game_won = True
             self.end()
             return True
@@ -305,18 +314,18 @@ class Solitaire:
         time = self.time_remaining()
 
         if self.game_won:
-            self.score += time * 100
+            self.time_bonus += time * 100
         else:
             num_cards = self._get_foundation_total()
 
             if num_cards < 10:
-                self.score += time
+                self.time_bonus += time
             elif num_cards < 20:
-                self.score += time * 2
+                self.time_bonus += time * 2
             elif num_cards < 35:
-                self.score += time * 10
+                self.time_bonus += time * 10
             else:
-                self.score += time * 50
+                self.time_bonus += time * 50
 
     def _get_foundation_total(self):
         total = 0
@@ -330,7 +339,7 @@ class Solitaire:
         remaining = self.time_remaining()
         minutes, seconds = divmod(remaining, 60)
         print(f"Time remaining: {minutes:02}:{seconds:02}")
-        print(f"Score: {self.score}")
+        print(f"Score: {self.base_score}")
         print(f"Stock: {len(self.stock.cards)} cards")
         print(self.waste)
         print("\nTableaus:")
