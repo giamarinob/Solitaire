@@ -3,8 +3,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class DuelingDQN(nn.Module):
-    def __init__(self, input_size=29, output_size=83, hidden_size=128):
+    def __init__(self, input_size=29, output_size=83, hidden_size=128, device=None):
         super(DuelingDQN, self).__init__()
+
+        self.device = device or torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
         # Shared base layers
         self.shared_fc1 = nn.Linear(input_size, hidden_size)
@@ -18,7 +20,12 @@ class DuelingDQN(nn.Module):
         self.advantage_fc = nn.Linear(hidden_size, hidden_size)
         self.advantage_out = nn.Linear(hidden_size, output_size)
 
+        # Move model to the appropriate device
+        self.to(self.device)
+
     def forward(self, x):
+        x = x.to(self.device)  # Ensure input is on the right device
+
         # Shared layers
         x = F.relu(self.shared_fc1(x))
         x = F.relu(self.shared_fc2(x))
