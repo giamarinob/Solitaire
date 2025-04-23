@@ -48,3 +48,6 @@ htmlcov/
 
 # Pytorch Training agents
 *.pth
+
+# Training Data plots
+Plots/*
