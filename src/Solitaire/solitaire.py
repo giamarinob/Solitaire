@@ -96,6 +96,9 @@ class Solitaire:
         if index < -1 or index >= len(from_tableau.cards):
             return False
 
+        if len(from_tableau.cards) == 0:
+            return False
+
         moving_card = from_tableau.cards[index]
         if not moving_card.face_up:
             return False  # Cannot move facedown cards
@@ -165,6 +168,7 @@ class Solitaire:
         return False
 
     def _move_tableau_to_tableau(self, from_index, to_index, start_index):
+        print("From To Start:", from_index, to_index, start_index)
         if not self.can_move_tableau_to_tableau(from_index, to_index, start_index):
             print("Illegal move.")
             return False

@@ -2,6 +2,7 @@ import torch
 from RL.buffer.replay_buffer import ReplayBuffer
 from RL.agents.dqn_agent import DQNAgent
 from RL.solitare_env import SolitaireEnv  # Your environment wrapper
+import os
 
 # Hyperparameters
 INPUT_SIZE = 29
@@ -9,7 +10,7 @@ OUTPUT_SIZE = 83
 HIDDEN_SIZE = 128
 BUFFER_CAPACITY = 100_000
 BATCH_SIZE = 64
-EPISODES = 1000
+EPISODES = 100
 MAX_STEPS = 500
 
 # Setup
@@ -45,4 +46,5 @@ for episode in range(EPISODES):
 
 # Save the trained model
 torch.save(agent.q_network.state_dict(), "dqn_solitaire.pth")
+print("Saving to: ", os.getcwd())
 print("Model saved as dqn_solitaire.pth")
