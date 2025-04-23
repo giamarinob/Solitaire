@@ -50,4 +50,4 @@ htmlcov/
 *.pth
 
 # Training Data plots
-Plots/*
+src/Plots/*
