@@ -1,6 +1,6 @@
 from time import sleep
 from RL.solitare_env import SolitaireEnv
-from RL.simple_agent import SimpleAgent
+from RL.agents.simple_agent import SimpleAgent
 
 def main():
     env = SolitaireEnv()
@@ -12,10 +12,11 @@ def main():
 
     while not done:
         action = agent.select_action(obs)
-        print(env.action_space[action])
+        # print(env.action_space[action])
         obs, reward, done, info = env.step(action)
+        SolitaireEnv.decode_observation(obs)
         total_reward += reward
-        env.render()  # optional: show board
+        # env.render()  # optional: show board
         sleep(1)
 
     print(f"Game over. Total reward: {total_reward}")
