@@ -7,7 +7,7 @@ from RL.models.dueling_dqn import DuelingDQN
 
 class DQNAgent:
     def __init__(self, input_size, output_size, hidden_size=128, buffer=None, lr=1e-3, gamma=0.99, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=10000, target_update_freq=1000, device=None):
-        self.device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = device or torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
         self.q_network = DuelingDQN(input_size, output_size, hidden_size, self.device)
         self.target_network = DuelingDQN(input_size, output_size, hidden_size, self.device)
