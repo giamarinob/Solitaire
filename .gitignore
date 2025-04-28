@@ -45,3 +45,9 @@ htmlcov/
 # Environment files (optional, if using dotenv)
 .env
 .env.*
+
+# Pytorch Training agents
+src/TrainedModels/*
+
+# Training Data plots
+src/Plots/*

@@ -96,6 +96,9 @@ class Solitaire:
         if index < -1 or index >= len(from_tableau.cards):
             return False
 
+        if len(from_tableau.cards) == 0:
+            return False
+
         moving_card = from_tableau.cards[index]
         if not moving_card.face_up:
             return False  # Cannot move facedown cards
@@ -166,7 +169,7 @@ class Solitaire:
 
     def _move_tableau_to_tableau(self, from_index, to_index, start_index):
         if not self.can_move_tableau_to_tableau(from_index, to_index, start_index):
-            print("Illegal move.")
+            # print("Illegal move.")
             return False
 
         from_tableau = self.tableaus[from_index]
@@ -198,11 +201,11 @@ class Solitaire:
 
         card = tableau.top_card()
         if not card or not card.face_up:
-            print("No face-up card to move.")
+            # print("No face-up card to move.")
             return False
 
         if not foundation.can_add_card(card):
-            print("Illegal move to foundation.")
+            # print("Illegal move to foundation.")
             return False
 
         self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.base_score)
@@ -222,17 +225,17 @@ class Solitaire:
         card = self.waste.top_card()
 
         if not card:
-            print("No card in waste to move.")
+            # print("No card in waste to move.")
             return False
 
         if tableau.is_empty():
             if card.rank != 'K':
-                print("Only Kings can be moved to an empty tableau.")
+                # print("Only Kings can be moved to an empty tableau.")
                 return False
         else:
             target_card = tableau.top_card()
             if card.color == target_card.color or card.value != target_card.value - 1:
-                print("Illegal move to tableau.")
+                # print("Illegal move to tableau.")
                 return False
 
         self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.base_score)
@@ -246,11 +249,11 @@ class Solitaire:
         card = self.waste.top_card()
 
         if not card:
-            print("No card in waste to move.")
+            # print("No card in waste to move.")
             return False
 
         if not foundation.can_add_card(card):
-            print("Illegal move to foundation.")
+            # print("Illegal move to foundation.")
             return False
 
         self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.base_score)
@@ -265,17 +268,17 @@ class Solitaire:
 
         card = foundation.top_card()
         if not card:
-            print("No card in foundation to move.")
+            # print("No card in foundation to move.")
             return False
 
         if tableau.is_empty():
             if card.rank != 'K':
-                print("Only Kings can be moved to an empty tableau.")
+                # print("Only Kings can be moved to an empty tableau.")
                 return False
         else:
             top_tableau_card = tableau.top_card()
             if card.color == top_tableau_card.color or card.value != top_tableau_card.value - 1:
-                print("Illegal move from foundation to tableau.")
+                # print("Illegal move from foundation to tableau.")
                 return False
 
         self._store_move(self.stock, self.waste, self.tableaus, self.foundations, self.base_score)
