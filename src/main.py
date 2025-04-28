@@ -12,7 +12,7 @@ OUTPUT_SIZE = 83
 HIDDEN_SIZE = 128
 BUFFER_CAPACITY = 100_000
 BATCH_SIZE = 64
-EPISODES = 100
+EPISODES = 1000
 MAX_STEPS = 500
 MODEL_PATH = "TrainedModels/dqn_solitaire.pth"
 
@@ -38,6 +38,7 @@ num_wins = 0
 # Training loop
 for episode in range(EPISODES):
     state = env.reset()
+    SolitaireEnv.decode_observation(state)
     total_reward = 0
     win = False
     loss = None
@@ -66,6 +67,7 @@ for episode in range(EPISODES):
 
     win_rate = num_wins / (episode + 1)
 
+    env.render()
     print(f"Episode {episode + 1} | Total Reward: {total_reward:.2f} | Loss: {loss:.4f}" if loss else f"Episode {episode + 1} | Total Reward: {total_reward:.2f}")
 
 # Save the trained model

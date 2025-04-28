@@ -116,6 +116,7 @@ class SolitaireEnv:
         return self._get_observation(), reward, done, info
 
     def _execute_action(self, action):
+        print("Executing action: ", action)
         try:
             if action[0] == "draw":
                 self.game.draw_from_stock()
