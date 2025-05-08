@@ -1,4 +1,4 @@
-from Solitaire import Solitaire
+from src.Solitaire import Solitaire
 
 def print_help():
     print("""
