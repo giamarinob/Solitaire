@@ -6,6 +6,7 @@ import copy
 class SolitaireEnv:
     @staticmethod
     def decode_observation(obs):
+        return
         suit_values = list(Card.SUITS.values())
 
         def decode_card(value, suit_idx):
@@ -21,8 +22,6 @@ class SolitaireEnv:
             "tableaus": obs[14:28],
             "stock_size": obs[28],
         }
-
-        print("Decoded Observation: ")
 
         print("Waste:")
         for i in range(0, 6, 2):
@@ -85,10 +84,14 @@ class SolitaireEnv:
         # Optional: Quit
         actions.append(("quit",))
 
+        print("Actions: ", actions)
+        print("Num Actions: ", len(actions))
         return actions
 
     def reset(self):
         self.game = Solitaire()
+        self.action_space = self._build_action_space()
+        self.prev_score = 0
         return self._get_observation()
 
     def step(self, action):
@@ -113,6 +116,7 @@ class SolitaireEnv:
             reward -= 10 # Small penalty for quitting early
             done = True
 
+        print("Reward: ", reward)
         return self._get_observation(), reward, done, info
 
     def _execute_action(self, action):
@@ -120,6 +124,7 @@ class SolitaireEnv:
         try:
             if action[0] == "draw":
                 self.game.draw_from_stock()
+                return True
             elif action[0] == "w2f":
                 return self.game.move("waste", None, "foundation", action[1])
             elif action[0] == "w2t":

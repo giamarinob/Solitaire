@@ -6,7 +6,7 @@ import numpy as np
 from RL.models.dueling_dqn import DuelingDQN
 
 class DQNAgent:
-    def __init__(self, input_size, output_size, hidden_size=128, buffer=None, lr=1e-3, gamma=0.99, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=10000, target_update_freq=1000, device=None):
+    def __init__(self, input_size, output_size, hidden_size=128, buffer=None, lr=2.5e-4, gamma=0.99, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=10000, target_update_freq=1000, device=None):
         self.device = device or torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
         self.q_network = DuelingDQN(input_size, output_size, hidden_size, self.device)
@@ -56,7 +56,7 @@ class DQNAgent:
             next_q_values = self.target_network(next_states).gather(1, next_actions).squeeze(1)
             targets = rewards + self.gamma * next_q_values * (1 - dones)
 
-        loss = nn.MSELoss()(q_values, targets)
+        loss = nn.SmoothL1Loss()(q_values, targets)
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
