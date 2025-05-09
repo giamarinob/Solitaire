@@ -202,7 +202,7 @@ class SolitaireEnv:
                     obs.extend([0, 0])
 
             # Add number of facedown cards
-            obs.append(tableau.get_facedown_cards())
+            obs.append(tableau.count_facedown_cards())
 
         # Stock size
         obs.append(len(self.game.stock.cards))

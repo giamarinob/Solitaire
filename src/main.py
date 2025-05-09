@@ -7,14 +7,14 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 
 # Hyperparameters
-INPUT_SIZE = 29
-OUTPUT_SIZE = 83
+INPUT_SIZE = 204
+OUTPUT_SIZE = 616
 HIDDEN_SIZE = 128
 BUFFER_CAPACITY = 100_000
 BATCH_SIZE = 64
-EPISODES = 1000
+EPISODES = 10
 MAX_STEPS = 500
-MODEL_PATH = "TrainedModels/dqn_solitaire.pth"
+MODEL_PATH = "TrainedModels/checkpoint.pth"
 
 # Setup
 device = torch.device("mps" if torch.backends.mps.is_available() else (
@@ -24,10 +24,14 @@ env = SolitaireEnv()
 buffer = ReplayBuffer(capacity=BUFFER_CAPACITY)
 agent = DQNAgent(INPUT_SIZE, OUTPUT_SIZE, HIDDEN_SIZE, buffer=buffer, device=device)
 
+# Load checkpoint if it exists
 if os.path.exists(MODEL_PATH):
-    agent.q_network.load_state_dict(torch.load(MODEL_PATH, map_location=device))
-    agent.target_network.load_state_dict(agent.q_network.state_dict())
-    print(f"Loaded existing model from {MODEL_PATH}")
+    checkpoint = torch.load(MODEL_PATH, map_location=device)
+    agent.q_network.load_state_dict(checkpoint["q_network"])
+    agent.target_network.load_state_dict(checkpoint["target_network"])
+    agent.optimizer.load_state_dict(checkpoint["optimizer"])
+    agent.epsilon = checkpoint["epsilon"]
+    print(f"✅ Loaded checkpoint from {MODEL_PATH}")
 
 # Track statistics
 episode_rewards = []
@@ -70,10 +74,14 @@ for episode in range(EPISODES):
     env.render()
     print(f"Episode {episode + 1} | Total Reward: {total_reward:.2f} | Loss: {loss:.4f}" if loss else f"Episode {episode + 1} | Total Reward: {total_reward:.2f}")
 
-# Save the trained model
-torch.save(agent.q_network.state_dict(), "TrainedModels/dqn_solitaire.pth")
-print("Saving to: ", os.getcwd())
-print("Model saved as dqn_solitaire.pth")
+# Save checkpoint
+torch.save({
+    "q_network": agent.q_network.state_dict(),
+    "target_network": agent.target_network.state_dict(),
+    "optimizer": agent.optimizer.state_dict(),
+    "epsilon": agent.epsilon,
+}, MODEL_PATH)
+print(f"✅ Checkpoint saved to {MODEL_PATH}")
 
 # Save plots with timestamp
 os.makedirs("Plots", exist_ok=True)
