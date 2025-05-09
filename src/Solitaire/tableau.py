@@ -29,10 +29,8 @@ class Tableau:
         # Display the current tableau for debugging purposes.
         return [str(card) for card in self.cards]
 
-    def can_add_card(self, card):
-        # Check if a card can be added to the tableau.
-        # Placeholder for future move validation logic (e.g., alternating colors and descending order)
-        pass
+    def count_facedown_cards(self):
+        return sum(not c.face_up for c in self.cards)
 
     def __repr__(self):
         return f"Tableau: {self.display()}"
