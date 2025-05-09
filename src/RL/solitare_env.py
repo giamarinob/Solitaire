@@ -1,7 +1,6 @@
 # src/rl/solitaire_env.py
 from src.Solitaire import Solitaire
 from src.Solitaire.card import Card
-import copy
 
 class SolitaireEnv:
     @staticmethod
@@ -53,33 +52,36 @@ class SolitaireEnv:
     def _build_action_space(self):
         actions = []
 
-        # Action: Draw from stock
+        # Draw from stock
         actions.append(("draw",))
 
-        # Waste to Foundation/Tableau
-        for i in range(4):
-            actions.append(("w2f", i))
-        for i in range(7):
-            actions.append(("w2t", i))
+        # Waste to foundation (4)
+        for f in range(4):
+            actions.append(("w2f", f))
 
-        # Tableau to Foundation
-        for tableau_idx in range(7):
-            for foundation_idx in range(4):
-                actions.append(("t2f", tableau_idx, foundation_idx))
+        # Waste to tableau (7)
+        for t in range(7):
+            actions.append(("w2t", t))
 
-        # Tableau to Tableau (top card only)
-        for i in range(7):
-            for j in range(7):
-                if i != j:
-                    actions.append(("t2t", i, j))
+        # Tableau to foundation (7 x 4)
+        for t in range(7):
+            for f in range(4):
+                actions.append(("t2f", t, f))
 
-        # Optional: Foundation to Tableau
-        # for i in range(4):
-        #     for j in range(7):
-        #         actions.append(("f2t", i, j))
+        # Tableau to tableau with start index (7 x 6 x 13 = 546)
+        for from_idx in range(7):
+            for to_idx in range(7):
+                if from_idx != to_idx:
+                    for start_index in range(1, 14):  # Assume max 13 face-up cards
+                        actions.append(("t2t", from_idx, to_idx, start_index))
 
-        # Optional: Grant Access to Undo Function
-        # actions.append(("undo")
+        # Foundation to tableau (4 x 7)
+        for f in range(4):
+            for t in range(7):
+                actions.append(("f2t", f, t))
+
+        # Undo
+        actions.append(("undo",))
 
         # Optional: Quit
         actions.append(("quit",))
@@ -132,8 +134,13 @@ class SolitaireEnv:
             elif action[0] == "t2f":
                 return self.game.move("tableau", action[1], "foundation", action[2])
             elif action[0] == "t2t":
-                # Simplified version will only move the top card on a tableau
-                return self.game.move("tableau", action[1], "tableau", action[2], 0)
+                tableau = self.game.tableaus[action[1]]
+                start_index = action[3]
+                if tableau:
+                    facedown_count = tableau.count_facedown_cards()
+                    start_index += facedown_count
+
+                return self.game.move("tableau", action[1], "tableau", action[2], start_index)
             elif action[0] == "f2t":
                 # Not currently exposed in the action space
                 return self.game.move("foundation", action[1], "tableau", action[2])
