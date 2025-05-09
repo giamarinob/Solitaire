@@ -142,10 +142,8 @@ class SolitaireEnv:
 
                 return self.game.move("tableau", action[1], "tableau", action[2], start_index)
             elif action[0] == "f2t":
-                # Not currently exposed in the action space
                 return self.game.move("foundation", action[1], "tableau", action[2])
             elif action[0] == "undo":
-                # Not currently exposed in the action space
                 return self.game.undo()
             elif action[0] == "quit":
                 self.game.end()
@@ -189,14 +187,22 @@ class SolitaireEnv:
 
         # Tableaus (top card from each pile only)
         for tableau in self.game.tableaus:
-            top_card = tableau.top_card()
-            if top_card and top_card.face_up:
-                obs.extend([
-                    top_card.value,
-                    SolitaireEnv._suit_to_index(top_card.suit)
-                ])
-            else:
-                obs.extend([0, 0])
+            faceup_cards = [card for card in tableau.cards if card.face_up]
+
+            # Pad or trim to 13 cards
+            padded = faceup_cards[:13] + [None] * (13 - len(faceup_cards))
+
+            for card in padded:
+                if card:
+                    obs.extend([
+                        card.value,
+                        SolitaireEnv._suit_to_index(card.suit)
+                    ])
+                else:
+                    obs.extend([0, 0])
+
+            # Add number of facedown cards
+            obs.append(tableau.get_facedown_cards())
 
         # Stock size
         obs.append(len(self.game.stock.cards))
